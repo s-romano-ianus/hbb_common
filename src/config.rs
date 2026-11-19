@@ -113,8 +113,17 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["rs-ny.rustdesk.com"];
-pub const RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";
+// Custom build: rendezvous server and its public key are injected at compile time
+// via the RENDEZVOUS_SERVER / RS_PUB_KEY environment variables (see build-windows.ps1).
+// Without them the build falls back to the upstream public servers.
+pub const RENDEZVOUS_SERVERS: &[&str] = &[match option_env!("RENDEZVOUS_SERVER") {
+    Some(s) => s,
+    None => "rs-ny.rustdesk.com",
+}];
+pub const RS_PUB_KEY: &str = match option_env!("RS_PUB_KEY") {
+    Some(s) => s,
+    None => "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=",
+};
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
