@@ -122,6 +122,13 @@ pub const RENDEZVOUS_SERVERS: &[&str] = &[match option_env!("RENDEZVOUS_SERVER")
     Some(s) => s,
     None => "rs-ny.rustdesk.com",
 }];
+// DareMoto: account/login server (address book, groups, SSO). Set API_SERVER at build
+// time (e.g. https://api.daremoto.net) to enable accounts; when empty, login, address
+// book and groups are hidden and the client never falls back to admin.rustdesk.com.
+pub const BUILTIN_API_SERVER: &str = match option_env!("API_SERVER") {
+    Some(s) => s,
+    None => "",
+};
 pub const RS_PUB_KEY: &str = match option_env!("RS_PUB_KEY") {
     Some(s) => s,
     None => "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=",
@@ -2921,7 +2928,7 @@ pub fn is_disable_ab() -> bool {
 
 #[inline]
 pub fn is_disable_account() -> bool {
-    is_some_hard_opton("disable-account")
+    BUILTIN_API_SERVER.is_empty() || is_some_hard_opton("disable-account")
 }
 
 #[inline]
